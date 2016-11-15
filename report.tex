@@ -62,7 +62,21 @@
 \clearpage
 \pagenumbering{arabic}
 
-\section{Usage } 
+\section{Usage} 
+\subsection{Compiling from Command Line}
+The source code for the Java application 'UnitTest' was divided into the packages `model', `view' and `controller'. The class containing the `main' method, the classes to be tested as well as the test classes where contained in the base directory (or default package). The following steps were conducted to build a jar application file:
+\begin{verbatim}
+mkdir build
+javac -d ./build *.java controller/UnitTestController.java ./
+    model/*.java view/*.java
+cd build
+jar cvfe UnitTest.jar UnitTestMain *.class controller/ view/ model/
+\end{verbatim} 
+Note that the `jar' file is named `UnitTest' while the `main' containing class is named `UnitTestMain'.
+The source code is provided in a separate tar.gz file.
+
+\subsection{Program Usage}
+The `TestUnit' application is invoked from the command line by \verb+java -jar UnitTest+. Then the application GUI should open with a default test class `Test1' already chosen. To run the unit tests, the user presses the button `Run Tests' upon the output shows up in the main text area. An additional button under the main text area `clear' can be used to empty the main text output area. The application shall be terminated by closing the main application window using the system's window close button.
 
 \section{System Description}
 
