@@ -89,11 +89,23 @@ The source code is provided in a separate tar.gz file.
 The `UnitTest' application is invoked from the command line by \verb+java -jar UnitTest+. Then the application GUI should open with a default test class `Test1' already chosen. To run the unit tests, the user presses the button `Run Tests' upon the output shows up in the main text area. An additional button under the main text area `clear' can be used to empty the main text output area. The application shall be terminated by closing the main application window using the system's window close button.
 
 \section{System Description}
-The application was designed according to the Model-View-Controller principle. The following textual description is also represented in an UML model shown in \textit{figure 2}. The model is represented by the UnitTest class. Plugged into a command line only main program, this class provides all functionality needed to do unit testing according to the specifications in the assignment description. Output in this case is obtained through an ArrayList<String> that contains all test messages.
+\subsection{Basic Design}
+The application was designed according to the Model-View-Controller principle. The following classes represent teh respective functionality:
+
+\begin{itemize}
+\item Model: UnitTest
+\item View: UnitTestGui
+\item Controller: UnitTestController
+\end{itemize}
+
+
+The following textual description is also represented in an UML diagram shown in \textit{figure 2}. The `model' is represented by the UnitTest class. If called from a command line only main program, this class provides all functionality needed to do unit testing according to the specifications in the assignment description. Output in this case is obtained through an ArrayList<String> that contains all test messages.
+
 The `view' implementation is the `Swing' based graphical user interface in the class UnitTestGui. Here, it was chosen to keep all interfacing parts to the model such as action listeners outside. Instead, methods that export the interactive elements of the GUI were implemented.
-The final part is the UnitTestController class which interconnects model and view. It takes a gui object as argument, which provides the needed access to the GUI elements. The controller class contains all the action listeners and controls the general flow of the program such as verification of the test class and running the actual tests. This is achieved by instantiation of the model from within the controller class.
 
+Finally, the `controller' is the UnitTestController class which connects `model' and `view'. It takes a GUI object as argument, which provides the needed access to the GUI elements. The controller class contains all the action listeners and controls the general flow of the program such as verification of the test class and running the actual tests. This is achieved by instantiation of the model from within the controller class.
 
+The main program is kept in a separate class, `TestUnitMain' from which the Swing thread is started. In the current implementation, it was chosen to also start the controller in the Swing Runnable. Hence, also the UnitTest program runs from the Swing thread. If this would result in an unresponsive GUI, the model could be implemented as a separate thread. However, in the current version this was not done. 
 
 \begin{figure}[p]
     \centering
@@ -104,10 +116,15 @@ The final part is the UnitTestController class which interconnects model and vie
 
 
 \section{Testing}
-A simple class `MyInt' and test class `Test1' was given. One further class with test class had to be implemented additionally. Here 'MyInt' and `Test1' were mostly used to verify the correct functioning of the UnitTest application, while the classes `BankAccout' and `AccountTester' represent more a real world use case. `Test1' contains one case that produces an exception which has to be handled by the UnitTest framework.
 
-Further it was tested whether a wrong test class name would be caught and handled gracefully, i.e. informing the user and going back to base state where the user can enter another test class. This seemed to work, however one special case was then found that could not be handled: If the user enters the correct name of a test class, however with wrong upper/lowercase letters, it is not caught by the usual exception handling. Some search on the web showed that this behaviour could be different between different operating systems based on case sensitivty of the respective file system. I conducted tests on OSX where wrong case, but existing names resulted in uncaught exceptions in the java console. The user interface does not give any clue why nothing happens, however, at least it does not crash and can still be used if a correct test class name is provided. 
+\subsection{Automated Testing}
+A set of JUnit tests for the model class `UnitTest' was implemented. Due to a missunderstanding, I was not aware that JUnit tests should be included, the tests were built after coding. While building the tests, it was realized that the chosen design for message output was probably not the most convenient as it makes it difficult to test.
 
+The JUnit tests check mostly the TestClass verification functionality. They assure that wrong TestClasses are detected and reported to the user. A number of test classes (Test1, Test2, Test3) were used for this purpose. It is not clear to me wether this is how it should be done, or whether one should build such objects dynamically within the JUnit code.
+
+\subsection{Manual Testing}
+
+In manual testing a problem was found related to different operating systems. Running the application on OSX resulted in uncaught exceptions when a correct class name with wrong upper/lowercase letters was entered. Several attempts to fix this issue were unsuccessful. Despite setting the statement in question within a try/catch block did not mend the problem. Testing on Linux reavealed that this error did not occur there.
 
 \addcontentsline{toc}{section}{\refname}
 \bibliography{references}
